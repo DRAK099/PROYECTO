@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora EoQ - Sistema ERP Académico</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Encabezado */
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        /* Formulario */
+        form {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Resultado */
+        .resultado {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora EoQ - Sistema ERP Académico</h1>
+
+        <!-- Formulario para calcular EoQ -->
+        <form action="calcular_eoq.php" method="post">
+            <label for="demanda">Demanda anual:</label>
+            <input type="number" id="demanda" name="demanda" required>
+
+            <label for="costo_pedido">Costo de realizar un pedido:</label>
+            <input type="number" id="costo_pedido" name="costo_pedido" required>
+
+            <label for="costo_mantenimiento">Costo de mantener una unidad:</label>
+            <input type="number" id="costo_mantenimiento" name="costo_mantenimiento" required>
+
+            <input type="submit" value="Calcular EoQ">
+        </form>
+
+        <!-- Formulario de configuración -->
+        <h2>Configuración</h2>
+        <form action="guardar_configuracion.php" method="post">
+            <label for="tasa_descuento">Tasa de descuento (%):</label>
+            <input type="number" id="tasa_descuento" name="tasa_descuento" min="0" max="100">
+
+            <label for="costo_envio">Costo de envío ($):</label>
+            <input type="number" id="costo_envio" name="costo_envio" min="0">
+
+            <label for="politica_inventario">Política de inventario:</label>
+            <select id="politica_inventario" name="politica_inventario">
+                <option value="fifo">FIFO</option>
+                <option value="lifo">LIFO</option>
+                <option value="promedio_ponderado">Promedio Ponderado</option>
+            </select>
+
+            <input type="submit" value="Guardar Configuración">
+        </form>
+
+        <!-- Resultado del cálculo de EoQ -->
+        <div class="resultado">
+            <?php
+            if (isset($_GET["eoq"])) {
+                $eoq = $_GET["eoq"];
+                echo "La Cantidad Económica de Pedido (EoQ) es: " . $eoq . " unidades";
+            }
+            ?>
+        </div>
+    </div>
+</body>
+</html>
+
+
