@@ -7,35 +7,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $politica_inventario = $_POST["politica_inventario"] ?? '';
 
     // Guardar la configuración en la base de datos
-    guardarConfiguracion($tasa_descuento, $costo_envio, $politica_inventario);
+    $configuracionGuardada = guardarConfiguracion($tasa_descuento, $costo_envio, $politica_inventario);
 
-    // Obtener los datos del formulario de cálculo de EoQ
-    $demanda_anual = $_POST["demanda"];
-    $costo_pedido = $_POST["costo_pedido"];
-    $costo_mantenimiento = $_POST["costo_mantenimiento"];
+    if ($configuracionGuardada) {
+        // Obtener los datos del formulario de cálculo de EoQ
+        $demanda_anual = $_POST["demanda"];
+        $costo_pedido = $_POST["costo_pedido"];
+        $costo_mantenimiento = $_POST["costo_mantenimiento"];
 
-    // Calcular la Cantidad Económica de Pedido (EoQ)
-    $eoq = calcularEoQ($demanda_anual, $costo_pedido, $costo_mantenimiento);
+        // Calcular la Cantidad Económica de Pedido (EoQ)
+        $eoq = calcularEoQ($demanda_anual, $costo_pedido, $costo_mantenimiento);
 
-    // Guardar los resultados de EoQ en la base de datos
-    guardarResultadosEoQ($demanda_anual, $costo_pedido, $costo_mantenimiento, $eoq);
+        // Guardar los resultados de EoQ en la base de datos
+        guardarResultadosEoQ($demanda_anual, $costo_pedido, $costo_mantenimiento, $eoq);
 
-    // Redirigir a la página principal con el resultado de EoQ
-    header("Location: resultado_eoq.php?eoq=$eoq");
-    exit;
-} else {
-    // Si no se han enviado datos del formulario, redirigir a la página principal o mostrar un mensaje de error
-    // Puedes personalizar este mensaje según tus necesidades
-    header("Location: resultado_eoq.php");
-    exit;
-}
-
-// Función para calcular la Cantidad Económica de Pedido (EoQ)
-function calcularEoQ($demanda_anual, $costo_pedido, $costo_mantenimiento) {
-    // Realizar el cálculo de EoQ aquí
-    // Por ejemplo:
-    $eoq = sqrt((2 * $demanda_anual * $costo_pedido) / $costo_mantenimiento);
-    return $eoq;
+        // Redirigir a la página principal con el resultado de EoQ
+        header("Location: resultado_eoq.php?eoq=$eoq");
+        exit;
+    } else {
+        // Si la configuración no se guardó correctamente, redirigir a la página principal o mostrar un mensaje de error
+        // Puedes personalizar este mensaje según tus necesidades
+        header("Location: resultado_eoq.php");
+        exit;
+    }
 }
 
 // Función para guardar la configuración en la base de datos
@@ -65,11 +59,14 @@ function guardarConfiguracion($tasa_descuento, $costo_envio, $politica_inventari
     $stmt->bind_param("dds", $tasa_descuento, $costo_envio, $politica_inventario);
 
     // Ejecutar la consulta
-    $stmt->execute();
+    $resultado = $stmt->execute();
 
     // Cerrar conexión
     $stmt->close();
     $conn->close();
+
+    // Devolver el resultado de la operación
+    return $resultado;
 }
 
 // Función para guardar los resultados de EoQ en la base de datos
